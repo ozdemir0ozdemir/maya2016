@@ -1,0 +1,61 @@
+// Clean dockable outliner creation
+proc dockableOutliner_createDockableOutliner(){
+	if(`window -ex DockableOutlinerWindow`){
+		deleteUI -window DockableOutlinerWindow;	   
+	}
+	if(`outlinerPanel -ex DockableOutliner`){
+	   deleteUI -panel DockableOutliner;
+	}
+	if(`dockControl -ex DockableOutlinerDock`){
+		deleteUI DockableOutlinerDock;
+	} 
+	 
+	window DockableOutlinerWindow;
+	frameLayout -w 300 -h 700 -labelVisible false -p DockableOutlinerWindow frameL;
+	dockControl -a "left" -content DockableOutlinerWindow -l "Dockable Outliner" -r DockableOutlinerDock;
+	
+}
+//Use this command for run... 
+global proc dockableOutliner_toggleOutliner(){
+	if(`dockControl -ex DockableOutlinerDock` && `outlinerPanel -ex DockableOutliner`){         
+		dockControl -e -vis (!`dockControl -q -vis DockableOutlinerDock`) DockableOutlinerDock;
+	}
+	else{   
+	   dockableOutliner_createDockableOutliner; 
+	   dockableOutliner_createPanel;
+	   scriptJob -e "NewSceneOpened" "reCreatePanel";
+	} 
+}
+
+// When Scene changed, re-create panel.
+global proc dockableOutliner_createPanel(){
+	if(`outlinerPanel -ex DockableOutliner`){
+	   deleteUI -panel DockableOutliner;
+	}
+	outlinerPanel -l "DockableOutlinerPanel1" -p frameL DockableOutliner;
+	
+	outlinerEditor -edit
+	-mainListConnection "worldList"
+    -selectionConnection "modelList"
+    -showShapes false
+    -showReferenceNodes false
+    -showReferenceMembers false
+    -showAttributes false
+    -showConnected false
+    -showAnimCurvesOnly false
+    -autoExpand false
+    -showDagOnly true
+    -ignoreDagHierarchy false
+    -expandConnections false
+    -showNamespace true
+    -showCompounds true
+    -showNumericAttrsOnly false
+    -highlightActive true
+    -autoSelectNewObjects false
+    -doNotSelectNewObjects false
+    -transmitFilters false
+    -showSetMembers true
+    -setFilter defaultSetFilter
+	-ignoreHiddenAttribute false
+	DockableOutliner;
+}

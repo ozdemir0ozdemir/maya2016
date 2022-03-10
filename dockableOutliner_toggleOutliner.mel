@@ -23,7 +23,7 @@ global proc dockableOutliner_toggleOutliner(){
 	else{   
 	   dockableOutliner_createDockableOutliner; 
 	   dockableOutliner_createPanel;
-	   scriptJob -e "NewSceneOpened" "reCreatePanel";
+	   scriptJob -e "NewSceneOpened" "dockableOutliner_createPanel";
 	} 
 }
 

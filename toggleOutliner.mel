@@ -1,8 +1,7 @@
 // Clean dockable outliner creation
-proc createDockableOutliner(){
+proc dockableOutliner_createDockableOutliner(){
 	if(`window -ex DockableOutlinerWindow`){
-		deleteUI -window DockableOutlinerWindow;
-	   
+		deleteUI -window DockableOutlinerWindow;	   
 	}
 	if(`outlinerPanel -ex DockableOutliner`){
 	   deleteUI -panel DockableOutliner;
@@ -11,63 +10,29 @@ proc createDockableOutliner(){
 		deleteUI DockableOutlinerDock;
 	} 
 	 
-	window -w 300 -h 800 DockableOutlinerWindow;
-	frameLayout -w 300 -h 700 -labelVisible false;
-	
-   
-	outlinerPanel -l "DockableOutlinerPanel1" -p DockableOutlinerWindow DockableOutliner;
-	outlinerEditor -edit
-	-mainListConnection "worldList"
-    -selectionConnection "modelList"
-    -showShapes false
-    -showReferenceNodes false
-    -showReferenceMembers false
-    -showAttributes false
-    -showConnected false
-    -showAnimCurvesOnly false
-    -autoExpand false
-    -showDagOnly true
-    -ignoreDagHierarchy false
-    -expandConnections false
-    -showNamespace true
-    -showCompounds true
-    -showNumericAttrsOnly false
-    -highlightActive true
-    -autoSelectNewObjects false
-    -doNotSelectNewObjects false
-    -transmitFilters false
-    -showSetMembers true
-    -setFilter defaultSetFilter
-	-ignoreHiddenAttribute false
-	DockableOutliner;
-	dockControl -a "left" -fl 1 -w 300 -h 800 -l "Dockable Outliner" -content DockableOutlinerWindow DockableOutlinerDock;
-	dockControl -e -w 300 -h 800 DockableOutlinerDock;
+	window DockableOutlinerWindow;
+	frameLayout -w 300 -h 700 -labelVisible false -p DockableOutlinerWindow frameL;
+	dockControl -a "left" -content DockableOutlinerWindow -l "Dockable Outliner" -r DockableOutlinerDock;
 	
 }
 //Use this command for run... 
-global proc toggleOutliner(){
-	scriptJob -e "NewSceneOpened" "reCreatePanel";
+global proc dockableOutliner_toggleOutliner(){
 	if(`dockControl -ex DockableOutlinerDock` && `outlinerPanel -ex DockableOutliner`){         
 		dockControl -e -vis (!`dockControl -q -vis DockableOutlinerDock`) DockableOutlinerDock;
 	}
-	else if(`dockControl -ex DockableOutlinerDock` && !`outlinerPanel -ex DockableOutliner`){
-		createDockableOutliner;
-		// To Fix filter area... bugs?
-		reCreatePanel;
-	}
 	else{   
-	   createDockableOutliner; 
-	   // To Fix filter area... bugs?
-	   reCreatePanel;
+	   dockableOutliner_createDockableOutliner; 
+	   dockableOutliner_createPanel;
+	   scriptJob -e "NewSceneOpened" "reCreatePanel";
 	} 
 }
 
 // When Scene changed, re-create panel.
-global proc reCreatePanel(){
+global proc dockableOutliner_createPanel(){
 	if(`outlinerPanel -ex DockableOutliner`){
 	   deleteUI -panel DockableOutliner;
 	}
-	outlinerPanel -l "DockableOutlinerPanel1" -p DockableOutlinerWindow DockableOutliner;
+	outlinerPanel -l "DockableOutlinerPanel1" -p frameL DockableOutliner;
 	
 	outlinerEditor -edit
 	-mainListConnection "worldList"
